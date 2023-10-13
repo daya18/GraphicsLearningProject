@@ -8,7 +8,7 @@
 Scene::Scene () {}
 
 Scene::Scene ( Window & window )
-:
+:  
 	skybox ( {
 		{ Sides::left,		"images/envmap_miramar/miramar_lf.tga" },
 		{ Sides::right,		"images/envmap_miramar/miramar_rt.tga" },

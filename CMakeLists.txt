@@ -1,13 +1,17 @@
 ﻿# CMakeList.txt : CMake project for GraphicsLearningProject, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.26)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
+
+project ("GraphicsLearningProject")
+
+set ( BUILD_SHARED_LIBS FALSE )
 
 # Add ASSIMP
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "Build Assimp command line tools")
@@ -35,7 +39,6 @@ add_subdirectory ( external/glm )
 add_subdirectory ( external/freetype-2.13.2 )
 # ------------
 
-project ("GraphicsLearningProject")
 
 # Add source to this project's executable.
 add_executable ( GraphicsLearningProject )
@@ -75,9 +78,14 @@ target_sources ( GraphicsLearningProject PRIVATE
 	"source/Scene/Node.cpp" 
 	"source/Utility.cpp" 
 	"source/TestScenes.cpp"
- "source/OpenGL/Cubemap.cpp"  "source/OpenGL/Context.cpp" "source/CameraController.cpp" "source/Profiler.cpp"  "source/BoundingBox.cpp")
+	"source/OpenGL/Cubemap.cpp"  
+	"source/OpenGL/Context.cpp" 
+	"source/CameraController.cpp" 
+	"source/Profiler.cpp"  
+	"source/BoundingBox.cpp"
+)
 
-target_link_libraries (GraphicsLearningProject PUBLIC
+target_link_libraries (GraphicsLearningProject PRIVATE
 	glfw
 	glm
 	freetype
