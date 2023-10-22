@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../OpenGL/UniformBuffer.hpp"
+#include "../OpenGL/ShadowMap.hpp"
 
 class Shader;
 
@@ -9,23 +10,39 @@ class Light
 public:
 	enum class Types { point, directional };
 
-	Types type { Types::point };
+	Light ( 
+		Types						=	{ Types::point },
+		glm::vec3 const & position	=	{ 0.0f, 0.0f, 0.0f },
+		glm::vec3 const & color		=	{ 1.0f, 1.0f, 1.0f },
+		glm::vec3 const & direction =	{ 0.0f, 0.0f, 0.0f },
+		float attenuation			=	{ 0.01f }
+	);
+	
+	Light ( Light && ) = default;
 
-	glm::vec3 position	{ 0.0f, 0.0f, 0.0f };
-	glm::vec3 color		{ 1.0f, 1.0f, 1.0f };
-	glm::vec3 direction { 0.0f, 0.0f, 0.0f };
-	float attenuation	{ 0.01f };
+	Types type;
+
+	glm::vec3 position;
+	glm::vec3 color;
+	glm::vec3 direction;
+	float attenuation;
+
+//private:
+	ShadowMap shadowMap;
 
 	friend class LightSetup;
+	friend class SceneRenderer;
 };
 
 class LightSetup
 {
 public:
 	LightSetup ();
-	LightSetup ( std::vector <Light> const & );
+	LightSetup ( std::vector <Light> && );
 
 	void Bind ( Shader & );
+
+	std::vector <Light> const& GetLights () const;
 
 private:
 	static inline constexpr int maxLights { 500 };
@@ -46,5 +63,10 @@ private:
 
 	int GetLightTypeInt ( Light::Types );
 
+	std::vector <Light> lights;
 	UniformBuffer lightsUniformBuffer;
 };
+
+
+// Implementation
+inline std::vector <Light> const & LightSetup::GetLights () const { return lights; }

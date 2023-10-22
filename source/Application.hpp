@@ -2,7 +2,6 @@
 
 #include "OpenGL/Context.hpp"
 #include "OpenGL/VertexBuffer.hpp"
-#include "DebugRenderer.hpp"
 #include "Scene/Scene.hpp"
 #include "SceneRenderer.hpp"
 #include "Window.hpp"
@@ -16,14 +15,12 @@ public:
 	void Run ();
 	
 private:
-
 	bool quit { false };
 
 	Window window;
 	Assimp::Importer importer;
 	OpenGLContext openGLContext;
 	SceneRenderer sceneRenderer;
-	DebugRenderer debugRenderer;
 	VertexBuffer vertexBuffer;
 	std::unique_ptr <Scene> scene;
 	Profiler profiler;

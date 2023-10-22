@@ -21,5 +21,7 @@ private:
 	void LoadFromData ( std::vector <glm::vec4> const &, unsigned int width );
 
 	glm::vec2 size { 0, 0 };
+
+public:
 	GLuint texture { 0 };
 };

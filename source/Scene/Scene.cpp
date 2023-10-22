@@ -72,5 +72,5 @@ void Scene::Update ( float delta )
 
 void Scene::DebugRender ( DebugRenderer & renderer )
 {
-	renderer.SetCamera ( camera );
+	renderer.SetCamera ( &camera );
 }

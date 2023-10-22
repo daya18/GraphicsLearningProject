@@ -86,9 +86,9 @@ void  Window::glfwErrorCallback ( int errorCode, char const * desc )
 
 void  Window::glfwFramebufferSizeCallback ( GLFWwindow * glfwWindow, int width, int height )
 {
-	glfwMakeContextCurrent ( glfwWindow );
+	/*glfwMakeContextCurrent ( glfwWindow );
 	glViewport ( 0, 0, width, height );
-		
+	*/	
 	Window & window { *GetWindowData ( glfwWindow )->window };
 
 	window.framebufferResizeEvent.Dispatch ( { width, height } );

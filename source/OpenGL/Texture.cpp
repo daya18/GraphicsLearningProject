@@ -6,12 +6,12 @@
 Texture::Texture ()
 {
 	glGenTextures ( 1, &texture );
-
+	
 	Bind ();
 	
 	glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
 	glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
 	glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
 	Unbind ();
@@ -69,7 +69,7 @@ void Texture::LoadFromFile ( std::string const & filePath )
 	auto data { stbi_load ( filePath.data (), &size.x, &size.y, nullptr, 4 ) };
 	
 	glTexImage2D ( GL_TEXTURE_2D, 0, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
-	
+	glGenerateMipmap ( GL_TEXTURE_2D );
 	Unbind ();
 }
 
@@ -82,10 +82,10 @@ void Texture::LoadFromData ( std::vector <glm::vec4> const & pixels, unsigned in
 
 	for (auto const & pixel : pixels )
 	{
-		data.push_back ( pixel.r );
-		data.push_back ( pixel.g );
-		data.push_back ( pixel.b );
-		data.push_back ( pixel.a );
+		data.push_back ( pixel.r * 255 );
+		data.push_back ( pixel.g * 255 );
+		data.push_back ( pixel.b * 255 );
+		data.push_back ( pixel.a * 255 );
 	}
 
 	unsigned int height { static_cast <unsigned int> ( pixels.size () ) / width };

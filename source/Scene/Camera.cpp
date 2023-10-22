@@ -68,6 +68,13 @@ void Camera::Bind ( Shader & shader )
 	shader.SetUniform ( "u_cameraPosition", position );
 }
 
+void Camera::Unbind ( Shader & shader )
+{
+	shader.SetUniform ( "u_viewMatrix", glm::identity <glm::mat4> () );
+	shader.SetUniform ( "u_projectionMatrix", glm::identity <glm::mat4> () );
+	shader.SetUniform ( "u_cameraPosition", glm::zero <glm::vec3> () );
+}
+
 void Camera::UpdateViewMatrix ()
 {
 	viewMatrix = glm::lookAt ( position, position + targetDirection, { 0, 1, 0 } );

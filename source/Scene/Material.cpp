@@ -2,6 +2,7 @@
 
 #include "../OpenGL/Shader.hpp"
 #include "Scene.hpp"
+#include "../Utility.hpp"
 
 Material::Material ( std::filesystem::path textureDirectoryPath, aiMaterial & material )
 {
@@ -33,8 +34,8 @@ Material::Material ( std::filesystem::path textureDirectoryPath, aiMaterial & ma
 	material.Get ( AI_MATKEY_SHININESS, shininess );
 	material.Get ( AI_MATKEY_SHININESS_STRENGTH, shininessStrength );
 
-	ambientTexture = Texture { { glm::vec4 { 255, 255, 255, 255 } }, 1 };
-	diffuseTexture = Texture { { glm::vec4 { 255, 255, 255, 255 } }, 1 };
+	ambientTexture = Texture { { Colors::white }, 1 };
+	diffuseTexture = Texture { { Colors::white }, 1 };
 	
 	// Ambient texture
 	if (material.GetTextureCount ( aiTextureType_AMBIENT ) == 1)

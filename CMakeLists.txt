@@ -11,6 +11,8 @@ endif()
 
 project ("GraphicsLearningProject")
 
+set ( CMAKE_CXX_STANDARD 20 )
+
 set ( BUILD_SHARED_LIBS FALSE )
 
 # Add ASSIMP
@@ -83,7 +85,7 @@ target_sources ( GraphicsLearningProject PRIVATE
 	"source/CameraController.cpp" 
 	"source/Profiler.cpp"  
 	"source/BoundingBox.cpp"
-)
+ "source/OpenGL/ShadowMap.cpp")
 
 target_link_libraries (GraphicsLearningProject PRIVATE
 	glfw

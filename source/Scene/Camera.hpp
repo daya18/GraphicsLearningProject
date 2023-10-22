@@ -19,7 +19,8 @@ public:
 	float GetFOV () const;
 
 	void Bind ( Shader & shader );
-	
+	void Unbind ( Shader & shader );
+
 	glm::mat4 const & GetViewMatrix () const;
 
 private:

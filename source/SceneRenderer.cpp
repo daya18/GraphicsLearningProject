@@ -9,11 +9,10 @@
 #include "Scene/Node.hpp"
 #include "BoundingBox.hpp"
 
-SceneRenderer::SceneRenderer () {}
-
-SceneRenderer::SceneRenderer ( Window & window )
+SceneRenderer::SceneRenderer ( Assimp::Importer & importer, Window & window )
 : 
 	window ( & window ),
+	debugRenderer ( importer ),
 
 	vertexArray { {
 		{ GL_FLOAT, 3 },
@@ -23,6 +22,7 @@ SceneRenderer::SceneRenderer ( Window & window )
 	} },
 
 	shader { "shaders/Shader.glsl" },
+	shadowMapShader { "shaders/ShadowMapShader.glsl" },
 
 	cubeVertexArray { { { GL_FLOAT, 3 } } },
 
@@ -90,6 +90,15 @@ void SceneRenderer::SetScene ( Scene & scene )
 
 void SceneRenderer::Render ()
 {
+	for ( auto const & light : scene->lightSetup.GetLights () )
+		UpdateLightShadowMap ( light );
+
+	glBindFramebuffer ( GL_FRAMEBUFFER, 0 );
+	auto windowSize { window->GetSize () };
+	glViewport ( 0, 0, windowSize.x, windowSize.y );
+	glClearColor ( 0.0f, 0.0f, 0.0f, 1.0f );
+	glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	
 	RenderSkybox ();
 	
 	shader.Bind ();
@@ -107,6 +116,42 @@ void SceneRenderer::Render ()
 
 	vertexArray.Unbind ();
 	shader.Unbind ();
+
+	scene->DebugRender ( debugRenderer );
+}
+
+void SceneRenderer::UpdateLightShadowMap ( Light const & light )
+{
+	glm::vec3 viewPosition{ glm::normalize ( light.direction ) * -100.0f };
+	
+	//scene->camera.SetPosition ( viewPosition );
+	//scene->camera.SetTargetDirection ( light.direction );
+
+	glm::mat4 viewMatrix { glm::lookAt ( glm::zero <glm::vec3> (), light.direction, Directions::up)};
+
+	glm::mat4 projectionMatrix { glm::ortho <float> ( -100, 100, -100, 100, -100, 100 ) };
+
+	if ( light.type == Light::Types::directional )
+	{
+		light.shadowMap.BindFramebuffer ();
+		
+		glViewport ( 0, 0, 1000, 1000 );
+		glClear ( GL_DEPTH_BUFFER_BIT );
+
+		shadowMapShader.Bind ();
+		vertexArray.Bind ();
+
+		shadowMapShader.SetUniform ( "u_viewMatrix", viewMatrix );
+		shadowMapShader.SetUniform ( "u_projectionMatrix", projectionMatrix );
+
+		for ( auto const & node : scene->nodes )
+			RenderNodeDepth ( node );
+
+		vertexArray.Unbind ();
+		shadowMapShader.Unbind ();
+
+		light.shadowMap.UnbindFramebuffer ();
+	}
 }
 
 bool SceneRenderer::CheckInView ( Node const & node, unsigned int meshIndex )
@@ -188,4 +233,23 @@ void SceneRenderer::RenderSkybox ()
 	cubeShader.Unbind ();
 
 	glDepthMask ( GL_TRUE );
+}
+
+void SceneRenderer::RenderNodeDepth ( Node const & node )
+{
+	// Render this node
+	shadowMapShader.SetUniform ( "u_modelMatrix", node.transform );
+	shadowMapShader.SetUniform ( "u_normalMatrix", node.normalMatrix );
+
+	for ( auto meshIndex : node.meshIndices )
+	{
+		auto & mesh{ scene->GetMeshes ()[meshIndex] };
+
+		mesh.Bind ( vertexArray );
+		mesh.Draw ();
+	}
+
+	// Render children recursively
+	for ( auto & child : node.children )
+		RenderNodeDepth ( child );
 }

@@ -17,6 +17,8 @@ class Sponza : public Scene
 {
 public:
 	Sponza ( Window &, Assimp::Importer & importer );
+	
+	void DebugRender ( DebugRenderer & renderer ) override;
 };
 
 
@@ -30,6 +32,8 @@ public:
 
 private:
 	static constexpr glm::vec3 lightPosition { 0, 1, 2 };
+
+	Texture texture;
 };
 
 

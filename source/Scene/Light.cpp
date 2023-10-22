@@ -2,6 +2,19 @@
 
 #include "../OpenGL/Shader.hpp"
 
+Light::Light (
+	Types type,
+	glm::vec3 const & position,
+	glm::vec3 const	& color,
+	glm::vec3 const	& direction,
+	float attenuation
+)
+: 
+	type ( type ), position ( position ), color ( color ), direction ( direction ), attenuation ( attenuation ),
+	shadowMap ( { 1000, 1000 } )
+{
+}
+
 LightSetup::LightSetup () 
 {
 	std::unique_ptr <UniformBlockData> data { std::make_unique <UniformBlockData> () };
@@ -9,16 +22,17 @@ LightSetup::LightSetup ()
 	lightsUniformBuffer = UniformBuffer { *data };
 }
 
-LightSetup::LightSetup ( std::vector <Light> const & lights )
+LightSetup::LightSetup ( std::vector <Light> && lights)
+	: lights ( std::move ( lights ) )
 {
-	if (lights.size () <= maxLights)
+	if (this->lights.size () <= maxLights)
 	{
 		std::unique_ptr <UniformBlockData> data { std::make_unique <UniformBlockData> () };
 
-		data->count.x = lights.size ();
+		data->count.x = this->lights.size ();
 
 		int index { 0 };
-		for (auto const & light : lights)
+		for (auto const & light : this->lights)
 		{
 			auto & lightData { data->lights[index] };
 			lightData.position_type = { light.position, GetLightTypeInt ( light.type ) };

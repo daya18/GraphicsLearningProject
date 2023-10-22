@@ -4,6 +4,7 @@
 #include "OpenGL/VertexBuffer.hpp"
 #include "OpenGL/Shader.hpp"
 #include "OpenGL/UniformBuffer.hpp"
+#include "DebugRenderer.hpp"
 
 class Window;
 
@@ -14,38 +15,34 @@ class Camera;
 class LightSetup;
 class Cubemap;
 class Scene;
+class Light;
 
 class SceneRenderer
 {
 public:
-	SceneRenderer ();
-	SceneRenderer ( Window & );
+	SceneRenderer ( Assimp::Importer &, Window & );
 
 	void SetScene ( Scene & );
 
 	void Render ();
 
 private:
+	void UpdateLightShadowMap ( Light const & );
 	bool CheckInView ( Node const &, unsigned int mesh );
 	void AddNode ( Node const & );
 	void RenderNode ( Node const & );
 	void RenderSkybox ();
+	void RenderNodeDepth ( Node const & );
 
 	Window * window;
+	DebugRenderer debugRenderer;
 	Scene * scene;
 	VertexArray vertexArray;
 	Shader shader;
+	Shader shadowMapShader;
 	UniformBuffer pointLightBuffer;
 	VertexArray cubeVertexArray;
 	VertexBuffer cubeVertexBuffer;
 	Shader cubeShader;
 	int c;
 };
-
-// Implementation
-//inline VertexArray & Renderer::GetVertexArray () { return vertexArray; }
-//inline Shader & Renderer::GetShader () { return shader; }
-//inline Window & Renderer::GetWindow () const { return *window; }
-//inline void Renderer::SetSkybox ( Cubemap & skybox ) { this->skybox = &skybox; }
-//inline void Renderer::SetCamera ( Camera & camera ) { this->camera = &camera; }
-//inline void Renderer::SetLightSetup ( LightSetup & lightSetup ) { this->lightSetup = &lightSetup; }
