@@ -7,11 +7,13 @@ public:
 
 	// Compute from a set of points
 	void Compute ( std::vector <glm::vec3> const & );
+	void Compute ( std::vector <BoundingBox> const & );
 
 	// Check intersection with another bounding box
 	bool Intersects ( BoundingBox const & ) const;
 
 	void Transform ( glm::mat4 const & );
+	std::array <glm::vec3, 8> const & GetVertices () const;
 
 private:
 	void UpdateMinMax ();
@@ -27,3 +29,4 @@ public:
 //
 //inline glm::vec3 const & BoundingBox::GetMin () const { return vertices [0]; };
 //inline glm::vec3 const & BoundingBox::GetMax () const { return vertices [1]; };
+inline std::array <glm::vec3, 8> const & BoundingBox::GetVertices () const { return vertices; }

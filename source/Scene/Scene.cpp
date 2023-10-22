@@ -56,6 +56,8 @@ void Scene::AddFromFile ( Assimp::Importer & importer, std::string const & fileP
 	importer.FreeScene ();
 	
 	std::cout << "Scene file loaded: " << filePath << std::endl;
+
+	UpdateBoundingBox ();
 }
 
 void Scene::Clear ()
@@ -73,4 +75,15 @@ void Scene::Update ( float delta )
 void Scene::DebugRender ( DebugRenderer & renderer )
 {
 	renderer.SetCamera ( &camera );
+}
+
+void Scene::UpdateBoundingBox ()
+{
+	std::vector <BoundingBox> nodeBoundingBoxes;
+	nodeBoundingBoxes.reserve ( nodeBoundingBoxes.size () );
+
+	for ( auto const & node : nodes )
+		nodeBoundingBoxes.push_back ( node.GetBoundingBox () );
+
+	boundingBox.Compute ( nodeBoundingBoxes );
 }

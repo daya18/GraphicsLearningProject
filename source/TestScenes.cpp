@@ -77,14 +77,23 @@ Sponza::Sponza ( Window & window, Assimp::Importer & importer )
 		} );
 
 	GetLightSetup () = LightSetup { std::move ( lights ) };
+	
+	for ( auto const & vertex : GetBoundingBox ().GetVertices () )
+		std::cout << glm::to_string ( vertex ) << std::endl;
 }
 
 void Sponza::DebugRender ( DebugRenderer & renderer )
 {
 	Scene::DebugRender ( renderer );
 
+	for ( auto const & vertex : GetBoundingBox ().GetVertices () )
+	{
+		renderer.RenderSphere ( vertex, 0.5f );
+	}
+
 	renderer.SetCamera ( nullptr );
 	renderer.RenderTexture ( GetLightSetup ().GetLights ()[0].shadowMap.texture, { 0, 0, 0 }, 0.3f );
+
 }
 
 

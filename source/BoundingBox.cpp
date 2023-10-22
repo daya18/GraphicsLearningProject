@@ -30,6 +30,17 @@ void BoundingBox::Compute ( std::vector <glm::vec3> const & vertices )
 	UpdateMinMax ();
 }
 
+void BoundingBox::Compute ( std::vector <BoundingBox> const & boundingBoxes )
+{
+	std::vector <glm::vec3> vertices;
+	vertices.reserve ( boundingBoxes.size () * 8 );
+
+	for ( auto const & boundingBox : boundingBoxes )
+		vertices.insert ( vertices.end (), boundingBox.vertices.begin (), boundingBox.vertices.end () );
+
+	Compute ( vertices );
+}
+
 bool BoundingBox::Intersects ( BoundingBox const & rhs ) const
 {
 	if ( rhs.min.x > max.x || min.x > rhs.max.x )
